@@ -1,15 +1,14 @@
 #!/bin/bash
 # ============================================
-# Script para crear un commit con fecha de AYER
-# y subirlo al repositorio remoto (GitHub)
-# Funciona en Git Bash (Windows)
+# Script: commit-ayer.sh
+# Crea un commit con fecha de AYER (funciona en Windows Git Bash)
 # ============================================
 
-# Configura la fecha de AYER a las 12:00 (hora local)
-FECHA=$(date -d "yesterday 12:00" +"%Y-%m-%dT%H:%M:%S")
+# Generar fecha de ayer (compatible con Windows Git Bash)
+FECHA=$(powershell.exe -Command "(Get-Date).AddDays(-1).ToString('yyyy-MM-ddTHH:mm:ss')")
 
-# Si 'date -d' no funciona (en algunos Git Bash viejos), usa manual:
-# FECHA="2025-10-14T12:00:00"
+# Elimina posibles retornos de línea de PowerShell
+FECHA=$(echo $FECHA | tr -d '\r')
 
 # Mensaje del commit
 MENSAJE="update frontend"
@@ -17,18 +16,18 @@ MENSAJE="update frontend"
 echo "📅 Fecha usada: $FECHA"
 echo "📝 Mensaje: $MENSAJE"
 
-# Asegurar que hay cambios
+# Asegurar que hay cambios listos
 git add .
 
-# Crear el commit con ambas fechas forzadas
+# Crear commit con ambas fechas forzadas (autor y committer)
 GIT_AUTHOR_DATE="$FECHA" GIT_COMMITTER_DATE="$FECHA" git commit -m "update frontend"
 
-# Verificar resultado
+# Mostrar confirmación
 echo "✅ Commit creado con fecha forzada:"
 git log -1 --pretty=fuller
 
-# Hacer push (usa --force si el repo remoto ya tiene algo)
-echo "🚀 Subiendo al remoto..."
+# Subir al repo remoto (usa --force si es un repo nuevo)
+echo "🚀 Subiendo a GitHub..."
 git push -u origin main --force
 
-echo "🎉 Listo. Verifica en GitHub que la fecha del commit diga 'committed on <ayer>'."
+echo "🎉 Listo. Verifica en GitHub: debería decir 'committed on <ayer>'."
